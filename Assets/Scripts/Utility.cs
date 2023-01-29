@@ -24,5 +24,14 @@ namespace Assets.Scripts
         {
             return new Vector3Int(vector.x % div, vector.y % div, vector.z % div);
         }
+
+        public static Vector3Int VectorFloor(Vector3 vector)
+        {
+            return new Vector3Int(Mathf.FloorToInt(vector.x), Mathf.FloorToInt(vector.y), Mathf.FloorToInt(vector.z));
+        }
+        public static Vector3Int VectorCeil(Vector3 vector)
+        {
+            return new Vector3Int(Mathf.CeilToInt(vector.x), Mathf.CeilToInt(vector.y), Mathf.CeilToInt(vector.z));
+        }
     }
 }

@@ -14,13 +14,14 @@ public class MeshGenerator : MonoBehaviour
     private GridData data;
     private World world;
     private Vector3Int position;
+    public bool Valid;
 
     // Start is called before the first frame update
     void Start()
     {
         meshFilter = GetComponent<MeshFilter>();
         meshCollider = GetComponent<MeshCollider>();
-
+        Valid = false;
         //generateMesh();
     }
 
@@ -46,6 +47,7 @@ public class MeshGenerator : MonoBehaviour
         Mesh mesh = createMeshFlat(activeEdges, vertices);
         meshFilter.sharedMesh = mesh;
         meshCollider.sharedMesh = mesh;
+        Valid = true;
     }
 
     
