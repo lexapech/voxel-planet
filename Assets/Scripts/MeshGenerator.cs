@@ -14,6 +14,7 @@ public class MeshGenerator : MonoBehaviour
     private GridData data;
     private World world;
     private Vector3Int position;
+    private float _sizeMultiplier;
     public bool Valid;
 
     // Start is called before the first frame update
@@ -31,8 +32,9 @@ public class MeshGenerator : MonoBehaviour
 
     }
 
-    public void Initialize(World world,Vector3Int position,GridData data)
+    public void Initialize(World world,Vector3Int position,GridData data,float sizeMultiplier = 2f)
     {
+        _sizeMultiplier = sizeMultiplier;
         this.world = world;
         this.position = position;
         this.data = data;
@@ -238,14 +240,15 @@ public class MeshGenerator : MonoBehaviour
             else
                 order = new int[] { 2, 3, 0, 3, 1, 0};
             tris.AddRange(Enumerable.Select(order, x => verticesList.Count+x));
-            Vector3 vec1 = edge.vertices[order[5]].position - edge.vertices[order[4]].position;
+           /* Vector3 vec1 = edge.vertices[order[5]].position - edge.vertices[order[4]].position;
             Vector3 vec2 = edge.vertices[order[3]].position - edge.vertices[order[4]].position;
-            normals.AddRange(Enumerable.Select(edge.vertices, x => Vector3.Cross(vec1,vec2).normalized));
-            verticesList.AddRange(Enumerable.Select(edge.vertices, x => x.position));
+            normals.AddRange(Enumerable.Select(edge.vertices, x => Vector3.Cross(vec1,vec2).normalized));*/
+            verticesList.AddRange(Enumerable.Select(edge.vertices, x => (x.position-Vector3.one*data.Size/2) * _sizeMultiplier));
         }  
         mesh.vertices = verticesList.ToArray();
         mesh.triangles = tris.ToArray();
-        mesh.normals = normals.ToArray();
+        mesh.RecalculateNormals();
+        //mesh.normals = normals.ToArray();
         return mesh;
     }
     private Vertex[] findActiveCells(List<Edge> activeEdges)

@@ -33,5 +33,9 @@ namespace Assets.Scripts
         {
             return new Vector3Int(Mathf.CeilToInt(vector.x), Mathf.CeilToInt(vector.y), Mathf.CeilToInt(vector.z));
         }
+        public static Vector3 VectorAbs(Vector3 vector)
+        {
+            return new Vector3(Mathf.Abs(vector.x), Mathf.Abs(vector.y), Mathf.Abs(vector.z));
+        }
     }
 }

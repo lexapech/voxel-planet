@@ -21,6 +21,7 @@ namespace Assets.Scripts
         {
             return vector.x < val && vector.y < val && vector.z < val;
         }
+        
 
     }
     
