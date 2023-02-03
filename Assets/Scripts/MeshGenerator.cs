@@ -32,7 +32,7 @@ public class MeshGenerator : MonoBehaviour
 
     }
 
-    public void Initialize(World world,Vector3Int position,GridData data,float sizeMultiplier = 2f)
+    public void Initialize(World world,Vector3Int position,GridData data,float sizeMultiplier = 1f)
     {
         _sizeMultiplier = sizeMultiplier;
         this.world = world;

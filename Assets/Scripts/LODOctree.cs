@@ -1,4 +1,5 @@
 using Assets.Scripts;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
@@ -52,9 +53,9 @@ public class LODOctree : MonoBehaviour
 
     public void SetLODCenter(Vector3 center)
     {
-        SetLODCenter(Root, center);
+        setLODCenter(Root, center);
     }
-    private void SetLODCenter(LODNode node, Vector3 center)
+    private void setLODCenter(LODNode node, Vector3 center)
     {            
         if(node.Depth==Depth)
         {
@@ -71,7 +72,7 @@ public class LODOctree : MonoBehaviour
                 {
                     node.Children[i] = new LODNode(node.Depth + 1, getChildPosition(node, i));
                 }
-                SetLODCenter(node.Children[i], center);
+                setLODCenter(node.Children[i], center);
             }
             
         }
@@ -109,9 +110,30 @@ public class LODOctree : MonoBehaviour
     private float getDistanceToNode(Vector3 targetPosition, LODNode node)
     {
         Vector3 distance = Utility.VectorAbs(node.Position - targetPosition);
-        float minDistance = Mathf.Max(distance.x, distance.y, distance.z);
-        float nodeSize = Mathf.Pow(2, Depth - node.Depth) * ChunkSize;
+        var minDistance = Mathf.Max(distance.x, distance.y, distance.z);
+        var nodeSize = Mathf.Pow(2, Depth - node.Depth) * ChunkSize;
         return minDistance - nodeSize * 0.5f;
+    }
+
+    public LODNode FindContaningNode(Vector3 point)
+    {
+        var worldSize = GetNodeSize(Root) / 2;
+        if (Utility.VectorAbs(point).IsComponentWiseGreaterOrEqual(worldSize)) return null;
+        var currentNode = Root;
+        while (!currentNode.isLeaf)
+        {
+            var childIndex = getOctantIndex(point - currentNode.Position);
+            currentNode = currentNode.Children[childIndex];
+        }
+        return currentNode;
+    }
+
+    private int getOctantIndex(Vector3 position)
+    {
+        int x = position.x >= 0 ? 4 : 0;
+        int y = position.y >= 0 ? 2 : 0;
+        int z = position.z >= 0 ? 1 : 0;
+        return x + y + z;
     }
 
 }

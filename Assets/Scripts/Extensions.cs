@@ -21,7 +21,15 @@ namespace Assets.Scripts
         {
             return vector.x < val && vector.y < val && vector.z < val;
         }
-        
+        public static bool IsComponentWiseGreaterOrEqual(this Vector3 vector, float val)
+        {
+            return vector.x >= val || vector.y >= val || vector.z >= val;
+        }
+        public static bool IsComponentWiseLess(this Vector3 vector, float val)
+        {
+            return vector.x < val && vector.y < val && vector.z < val;
+        }
+
 
     }
     

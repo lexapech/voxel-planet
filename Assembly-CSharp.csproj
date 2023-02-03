@@ -58,14 +58,14 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\World.cs" />
     <Compile Include="Assets\Scripts\Extensions.cs" />
+    <Compile Include="Assets\Scripts\LODOctree.cs" />
+    <Compile Include="Assets\Scripts\Planet.cs" />
     <Compile Include="Assets\Scripts\GridData.cs" />
     <Compile Include="Assets\Scripts\Vertex.cs" />
     <Compile Include="Assets\Scripts\Edge.cs" />
     <Compile Include="Assets\Scripts\MeshGenerator.cs" />
     <Compile Include="Assets\Scripts\Utility.cs" />
     <Compile Include="Assets\Scripts\Player.cs" />
-    <Compile Include="Assets\Scripts\LODOctree.cs" />
-    <Compile Include="Assets\Scripts\Planet.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Shaders\normal.shader" />
