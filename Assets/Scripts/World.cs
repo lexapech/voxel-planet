@@ -92,7 +92,7 @@ public class World : MonoBehaviour
                 {
                     MeshGenerator chunk;
                     chunks.TryGetValue(new Vector3Int(x, y, z), out chunk);
-                    if (y == 0 && chunk && !chunk.Valid)
+                    if (y == 0 && chunk != null && !chunk.Valid)
                     {
                         chunk.generateMesh();
                     }

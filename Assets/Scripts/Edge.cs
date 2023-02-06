@@ -7,23 +7,29 @@ using UnityEngine;
 
 namespace Assets.Scripts
 {
-    public class Edge
+    public struct Edge
     {
         public enum Directions{
             X, Y, Z
         }
-
+        
         public Vector3Int startPosition;
         public Directions direction;
         public float value;
-        public List<Vertex> vertices;
+        public Vertex[] vertices;
+        private int _vertexCount;
 
         public Edge(Vector3Int startPosition, Directions direction)
         {
             this.startPosition = startPosition;
             this.direction = direction;
-            vertices = new List<Vertex>(4);
+            vertices = new Vertex[4];
             value = 0;
+            _vertexCount = 0;
+        }
+        public void AddVertex(Vertex vertex)
+        {
+            vertices[_vertexCount++]= vertex;
         }
     }
 }

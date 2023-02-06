@@ -7,7 +7,7 @@ using Unity.Collections;
 
 namespace Assets.Scripts
 {
-    public class GridData
+    public sealed class GridData
     {
         public int Size { get; }
         public byte[,,] volumes;

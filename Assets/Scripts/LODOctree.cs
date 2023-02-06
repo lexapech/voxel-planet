@@ -4,17 +4,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.Profiling;
 using UnityEngine.UIElements;
 
 public class LODOctree : MonoBehaviour
 {
     [SerializeField, Range(1, 20)]
     public int Depth = 5;
-    [SerializeField, Range(16, 128)]
-    public int ChunkSize = 32;
+    private int _chunkSize;
     [SerializeField, Range(1, 32)]
     public float LODFactor = 1f;
+
+    private IChunkProvider _chunkProvider;
+    private IMeshDataProvider _meshDataProvider;
     public LODNode Root { private set; get;}
+
+    private List<MeshChunk> chunksRequiringActivation = new List<MeshChunk>();
+    private List<MeshChunk> chunksRequiringDestruction = new List<MeshChunk>();
 
     static readonly Vector3[] NODE_OFFSETS =
     {
@@ -36,11 +42,11 @@ public class LODOctree : MonoBehaviour
 
         public bool isLeaf;
 
-        private MeshGenerator _meshGenerator;
+        public MeshChunk MeshChunk;
 
         public LODNode(int depth, Vector3 position)
         {
-            Depth=depth;
+            Depth = depth;
             Position = position;
             Children = new LODNode[8];
         }
@@ -48,7 +54,14 @@ public class LODOctree : MonoBehaviour
     }
     public LODOctree()
     {
+        
         Root = new LODNode(0, Vector3.zero);
+    }
+    public void Init(IChunkProvider chunkProvider,IMeshDataProvider meshDataProvider,int chunkSize)
+    {
+        _chunkSize = chunkSize;
+        _chunkProvider = chunkProvider;
+        _meshDataProvider = meshDataProvider;
     }
 
     public void SetLODCenter(Vector3 center)
@@ -57,7 +70,7 @@ public class LODOctree : MonoBehaviour
     }
     private void setLODCenter(LODNode node, Vector3 center)
     {            
-        if(node.Depth==Depth)
+        if(node.Depth == Depth)
         {
             setIsLeaf(node, true);
             // Stop at max depth
@@ -88,11 +101,65 @@ public class LODOctree : MonoBehaviour
         if(node.isLeaf != isLeaf)
         {
             node.isLeaf = isLeaf;
-            // if marking as leaf - add to create queue
-            // otherwise - add to destroy queue
+            if (node.isLeaf)
+            {
+                // If marking as leaf - add to create queue
+                node.MeshChunk = createMeshChunk(node.Position, GetNodeSize(node) / _chunkSize);
+                deleteChildNodes(node);
+            }
+            else if(node.MeshChunk!=null)
+            {
+                // otherwise - add to destroy queue
+
+                chunksRequiringDestruction.Add(node.MeshChunk);
+                node.MeshChunk = null;
+                //ChunkProvider.Destroy(ref node.MeshChunk);
+            }
         }
        
     }
+    private void deleteChildNodes(LODNode node)
+    {
+        for(int i = 0; i < 8; i++)
+        {
+            if (node.Children[i]!=null)
+            {
+                deleteChildNodes(node.Children[i]);
+                if (node.Children[i].MeshChunk)
+                {
+                    chunksRequiringDestruction.Add(node.Children[i].MeshChunk);
+                }                   
+                node.Children[i] = null;
+            }
+        }
+    }
+
+    private MeshChunk createMeshChunk(Vector3 position, float size)
+    {
+        MeshChunk meshChunk = _chunkProvider.Instantiate();
+        meshChunk.Init(transform, position, size, _meshDataProvider);
+
+        chunksRequiringActivation.Add(meshChunk);
+
+        return meshChunk;
+    }
+
+    public void ApplyMeshTransition()
+    {
+        for (int i = 0; i < chunksRequiringDestruction.Count; i++)
+        {
+            _chunkProvider.Destroy(chunksRequiringDestruction[i]);
+        }
+        for (int i = 0; i < chunksRequiringActivation.Count; i++)
+        {
+            chunksRequiringActivation[i].GenerateMesh();
+        }
+        chunksRequiringDestruction.Clear();
+        chunksRequiringActivation.Clear();
+
+
+    }
+
 
     private Vector3 getChildPosition(LODNode node, int index)
     {
@@ -105,17 +172,17 @@ public class LODOctree : MonoBehaviour
     }
     public float GetNodeSize(LODNode node)
     {
-        return Mathf.Pow(2, Depth - node.Depth) * ChunkSize;
+        return Mathf.Pow(2, Depth - node.Depth) * _chunkSize;
     }
     private float getDistanceToNode(Vector3 targetPosition, LODNode node)
     {
         Vector3 distance = Utility.VectorAbs(node.Position - targetPosition);
         var minDistance = Mathf.Max(distance.x, distance.y, distance.z);
-        var nodeSize = Mathf.Pow(2, Depth - node.Depth) * ChunkSize;
+        var nodeSize = Mathf.Pow(2, Depth - node.Depth) * _chunkSize;
         return minDistance - nodeSize * 0.5f;
     }
 
-    public LODNode FindContaningNode(Vector3 point)
+    public LODNode FindContainingNode(Vector3 point)
     {
         var worldSize = GetNodeSize(Root) / 2;
         if (Utility.VectorAbs(point).IsComponentWiseGreaterOrEqual(worldSize)) return null;

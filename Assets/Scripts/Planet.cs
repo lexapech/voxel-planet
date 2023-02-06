@@ -1,3 +1,4 @@
+using Assets.Scripts;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,43 +10,22 @@ public class Planet : MonoBehaviour
     // Start is called before the first frame update
     [SerializeField]
     GameObject Player;
+    [SerializeField, Range(16, 128)]
+    public int ChunkSize = 32;
     LODOctree LODOctree;
-    int counter = 0;
-    void Awake()
+    void Start()
     {
+        var chunkPool = GetComponent<ChunkPool>();
         LODOctree = GetComponent<LODOctree>();
+        LODOctree.Init(chunkPool, new PlanetMeshDataProvider(ChunkSize), ChunkSize); ;
+        LODOctree.SetLODCenter(Player.transform.position);
+        LODOctree.ApplyMeshTransition();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
-    }
-
-    private void OnDrawGizmos()
-    {
         LODOctree.SetLODCenter(Player.transform.position);
-        Gizmos.color = Color.yellow;
-        counter = 0;
-        LODDFS(LODOctree.Root);
-        Debug.Log(counter);
-
+        LODOctree.ApplyMeshTransition();
     }
-
-    private void LODDFS(LODNode node)
-    {
-       
-        if (node.isLeaf)
-        {
-            counter++;
-            Gizmos.DrawWireCube(node.Position, Vector3.one * LODOctree.GetNodeSize(node));
-            return;
-        }
-        for (int i = 0; i < 8; i++)
-        {         
-            LODDFS(node.Children[i]);      
-        }
-           
-    }
-
 }
