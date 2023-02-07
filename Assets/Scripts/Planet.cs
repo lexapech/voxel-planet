@@ -17,7 +17,7 @@ public class Planet : MonoBehaviour
     {
         var chunkPool = GetComponent<ChunkPool>();
         LODOctree = GetComponent<LODOctree>();
-        LODOctree.Init(chunkPool, new PlanetMeshDataProvider(ChunkSize), ChunkSize); ;
+        LODOctree.Init(chunkPool, new PlainsMeshDataProvider(ChunkSize), ChunkSize); ;
         LODOctree.SetLODCenter(Player.transform.position);
         LODOctree.ApplyMeshTransition();
     }

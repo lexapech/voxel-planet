@@ -25,8 +25,8 @@ namespace Assets.Scripts
                 {
                     for (int x = 0; x < _chunkSize; x++)
                     {
-                        Vector3 currentPos = position + Vector3.one * _chunkSize / 2 + new Vector3(x, y, z) * size;
-                        grid.volumes[x, y, z] = (byte)(Mathf.Clamp01(Mathf.PerlinNoise(currentPos.x / 100f, currentPos.z / 100f) * 40 + (Mathf.PerlinNoise(currentPos.x * 3 / 40f, currentPos.z * 3 / 40f) * 6 - 5) + 5 - y) * 255);
+                        Vector3 currentPos = position + (new Vector3(x, y, z) - Vector3.one * _chunkSize / 2) * size;
+                        grid.volumes[x, y, z] = (byte)(Mathf.Clamp01(Mathf.PerlinNoise(currentPos.x / 5000f, currentPos.z / 5000f) * 1500 + (Mathf.PerlinNoise(currentPos.x * 3 / 40f, currentPos.z * 3 / 40f) * 6 - 5) + 5 - currentPos.y) * 255);
                     }
                 }
             }

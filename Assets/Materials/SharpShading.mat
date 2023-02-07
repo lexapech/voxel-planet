@@ -91,7 +91,7 @@ Material:
     m_Colors:
     - _Color: {r: 0.040939845, g: 0.23223317, b: 0.3773585, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _GravityCenter: {r: 0, g: -100000, b: 0, a: 0}
+    - _GravityCenter: {r: 0, g: -10000, b: 0, a: 0}
     - _LightDirection: {r: -0.95, g: 1, b: -3.29, a: 0}
     - _SideColor: {r: 0.3490566, g: 0.25913632, b: 0.13007298, a: 1}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}

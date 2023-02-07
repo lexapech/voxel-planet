@@ -13,7 +13,7 @@ namespace Assets.Scripts
         public byte[,,] volumes;
         public GridData(int size)
         {
-            this.Size = size;
+            Size = size;
             volumes = new byte[size, size, size];
         }
     }
